@@ -1,0 +1,12 @@
+[submodule "weblocks-jquery"]
+	path = weblocks-jquery
+	url = git://github.com/html/weblocks-jquery.git
+[submodule "jquery-seq"]
+	path = jquery-seq
+	url = git://github.com/html/jquery-seq.git
+[submodule "lib/src/cl-config"]
+	path = lib/src/cl-config
+	url = git://github.com/html/cl-config.git
+[submodule "lib/src/firephp"]
+	path = lib/src/firephp
+	url = git://github.com/html/firephp.git

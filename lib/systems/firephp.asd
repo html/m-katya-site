@@ -1,0 +1,1 @@
+../src/firephp/firephp.asd

@@ -2,5 +2,7 @@
 
 
 (defclass page ()
-  ((title)
-   (content)))
+  ((id)
+   (title :accessor page-title :initarg :title)
+   (name :initarg :name)
+   (content :accessor page-content :initarg :content)))

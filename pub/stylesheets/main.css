@@ -270,3 +270,11 @@ div.empty p span.caption
   color:gray;
 }
 
+.pages-grid form.page {
+  width:100%;
+}
+
+.pages-grid form.page .content textarea {
+  width: 100%;
+  height: 500px;
+}

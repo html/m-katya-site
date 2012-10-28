@@ -1,6 +1,6 @@
 (defpackage #:m-katya-site
   (:use :cl :weblocks
-        :f-underscore :anaphora)
+        :f-underscore :anaphora :cl-config)
   (:import-from :hunchentoot #:header-in
     #:set-cookie #:set-cookie* #:cookie-in
     #:user-agent #:referer)
@@ -14,13 +14,17 @@
 ;; A macro that generates a class or this webapp
 
 (defwebapp m-katya-site
-    :prefix "/" 
-    :description "m-katya-site: A new application"
-    :init-user-session 'm-katya-site::init-user-session
-    :autostart nil                   ;; have to start the app manually
-    :ignore-default-dependencies nil ;; accept the defaults
-    :debug t
-    )   
+           :prefix "/" 
+           :description "m-katya-site: A new application"
+           :init-user-session 'm-katya-site::init-user-session
+           :autostart nil                   ;; have to start the app manually
+           :ignore-default-dependencies t ;; accept the defaults
+           :debug t
+           :dependencies (list 
+                           (make-instance 'script-dependency :url "/pub/scripts/jquery-1.8.2.js")
+                           (make-instance 'stylesheet-dependency :url "/pub/stylesheets/main.css")
+                           (make-instance 'script-dependency :url "/pub/scripts/weblocks-jquery.js")
+                           (make-instance 'script-dependency :url "/pub/scripts/jquery-seq.js")))   
 
 ;; Top level start & stop scripts
 

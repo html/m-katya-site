@@ -1,1 +1,1 @@
-../src/parenscript-20090216/parenscript.asd
+../src/parenscript-2.5/parenscript.asd
