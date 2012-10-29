@@ -278,3 +278,11 @@ div.empty p span.caption
   width: 100%;
   height: 500px;
 }
+
+form.collection {
+  width: 100%;
+}
+
+.drilldown-composite {
+  background-color: #ecf8d7;
+}

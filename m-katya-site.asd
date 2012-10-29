@@ -23,7 +23,9 @@
           (:file "collection"))
          :depends-on ("image-resize-util"))
         (:module "widgets" 
-         :components ((:file "pages-grid")))
+         :components 
+         ((:file "pages-grid")
+          (:file "collection-grid")))
         (:file "tinymce-textarea-presentation")
         (:file "image-resize-util"))
       :depends-on ("m-katya-site" conf))))
