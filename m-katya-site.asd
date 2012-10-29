@@ -10,16 +10,20 @@
    :author ""
    :licence ""
    :description "m-katya-site"
-   :depends-on (:weblocks :weblocks-utils :cl-config)
+   :depends-on (:weblocks :weblocks-utils :cl-config :yaclml :cl-gd)
    :components ((:file "m-katya-site")
      (:module conf
       :components ((:file "stores"))
       :depends-on ("m-katya-site"))
      (:module src 
-      :components ((:file "init-session" :depends-on ("models" "widgets" "tinymce-textarea-presentation"))
+      :components ((:file "init-session" :depends-on ("models" "widgets" "tinymce-textarea-presentation" "image-resize-util"))
         (:module "models" 
-         :components ((:file "page")))
+         :components 
+         ((:file "page")
+          (:file "collection"))
+         :depends-on ("image-resize-util"))
         (:module "widgets" 
          :components ((:file "pages-grid")))
-        (:file "tinymce-textarea-presentation"))
+        (:file "tinymce-textarea-presentation")
+        (:file "image-resize-util"))
       :depends-on ("m-katya-site" conf))))
