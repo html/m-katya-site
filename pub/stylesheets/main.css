@@ -286,3 +286,7 @@ form.collection {
 .drilldown-composite {
   background-color: #ecf8d7;
 }
+
+.remove-image-link a {
+  text-decoration: none;
+}

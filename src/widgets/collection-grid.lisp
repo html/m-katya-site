@@ -30,9 +30,27 @@
                                              (throw 'annihilate-dataform nil))))
                             (lambda (&rest args)
                               (with-yaclml 
-                                (loop for i in (slot-value item 'files) do 
-                                      (<:div :style "float:left;padding:10px;"
-                                             (<:img :src (collection-small-image i))))
+                                (let ((action-url (make-action-url 
+                                                    (make-action 
+                                                      (lambda (&rest args)
+                                                        (let ((id (parse-integer (getf args :id)))
+                                                              (file (getf args :file)))
+                                                          (remove-file 
+                                                            (weblocks-utils:first-by-values 'collection :id id)
+                                                            file))
+                                                        (redirect "" :defer nil))))))
+                                  (loop for i in (slot-value item 'files) do 
+                                      (<:div :style "float:left;padding:15px;text-align:right;position:relative;"
+                                             (<:div :style "position:absolute;right:0px;top:15px;font-size:20px;" :class "remove-image-link"
+                                                    (<:a :href 
+                                                         (add-get-param-to-url 
+                                                           (add-get-param-to-url action-url 
+                                                                                 "id"
+                                                                                 (write-to-string (object-id item)))
+                                                           "file"
+                                                           i)  "[x]"))
+                                             (<:br)
+                                             (<:img :src (collection-small-image i)))))
                                 (<:div :style "clear:both")))
                             (make-quickform 
                               (defview nil 
@@ -54,7 +72,7 @@
                               :answerp nil
                               :on-success (lambda (form data)
                                             (flash-message (dataseq-flash grid)
-                                                           "Успешно добавлена картинка")
+                                                           "Successfully added image")
                                             (mark-dirty form)
                                             (setf (dataform-ui-state form) :form))
                               :on-cancel (when (eql (gridedit-drilldown-type grid) :edit)

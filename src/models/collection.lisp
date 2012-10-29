@@ -34,3 +34,16 @@
         :target-width 100
         :target-height 100))
     (concatenate 'string "/pub/generated/100x100/" name)))
+
+(defmethod remove-file ((obj collection) file-name)
+  (with-slots (files) obj
+    (when (find file-name files :test #'string=)
+      (let  ((file-names (list 
+                      (merge-pathnames file-name 
+                                       (get-upload-directory))
+                      (merge-pathnames file-name 
+                                       (get-small-images-directory)))))
+        (loop for i in file-names do 
+              (when (probe-file i)
+                (delete-file i))))
+      (setf files (remove file-name files :test #'string=)))))
