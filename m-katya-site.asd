@@ -5,7 +5,7 @@
 
 (defsystem m-katya-site
    :name "m-katya-site"
-   :version "0.0.1"
+   :version "0.0.2"
    :maintainer ""
    :author ""
    :licence ""
@@ -20,7 +20,8 @@
         (:module "models" 
          :components 
          ((:file "page")
-          (:file "collection"))
+          (:file "collection")
+          (:file "shop-item"))
          :depends-on ("image-resize-util"))
         (:module "widgets" 
          :components 

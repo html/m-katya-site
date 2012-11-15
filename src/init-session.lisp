@@ -44,9 +44,19 @@
                      (files-count :present-as html 
                                   :reader (lambda (item)
                                             (write-to-string (length (slot-value item 'files))))))
-      :item-form-view (defview nil (:type form :persistp t :inherit-from '(:scaffold collection) :buttons '((:submit . "Save")))
-                               
-                               ))))
+      :item-form-view (defview nil (:type form :persistp t :inherit-from '(:scaffold collection) :buttons '((:submit . "Save")))))
+    (lambda (&rest args)
+      (with-html 
+        (:h1 "Магазин")))
+
+    (make-instance 
+      'collection-grid 
+      :data-class 'shop-item
+      :view (defview nil (:type table :inherit-from '(:scaffold shop-item) )
+                     (files-count :present-as html 
+                                  :reader (lambda (item)
+                                            (write-to-string (length (slot-value item 'files))))))
+      :item-form-view (defview nil (:type form :persistp t :inherit-from '(:scaffold shop-item) :buttons '((:submit . "Save")))))))
 
 (defun init-user-session (comp)
   (setf (composite-widgets comp)

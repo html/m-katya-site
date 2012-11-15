@@ -30,6 +30,7 @@
                                              (throw 'annihilate-dataform nil))))
                             (lambda (&rest args)
                               (with-yaclml 
+                                (<:h2 "Картинки к элементу")
                                 (let ((action-url (make-action-url 
                                                     (make-action 
                                                       (lambda (&rest args)
