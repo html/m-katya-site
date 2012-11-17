@@ -1,6 +1,7 @@
 (defpackage #:m-katya-site
   (:use :cl :weblocks
-        :f-underscore :anaphora :cl-config)
+        :f-underscore :anaphora :cl-config 
+        :weblocks-utils)
   (:import-from :hunchentoot #:header-in
     #:set-cookie #:set-cookie* #:cookie-in
     #:user-agent #:referer)
