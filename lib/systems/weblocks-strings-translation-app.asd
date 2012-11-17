@@ -1,0 +1,1 @@
+../src/weblocks-strings-translation-app/weblocks-strings-translation-app.asd

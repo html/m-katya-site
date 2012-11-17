@@ -1,1 +1,1 @@
-/home/oz/src/weblocks-utils/weblocks-utils.asd
+../src/weblocks-utils/weblocks-utils.asd

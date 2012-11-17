@@ -35,6 +35,7 @@
                                         (strip-tags (page-content item))))))
     (lambda (&rest args)
       (with-html
+        (:br)
         (:h1 "Колекции")))
 
     (make-instance 
@@ -44,9 +45,10 @@
                      (files-count :present-as html 
                                   :reader (lambda (item)
                                             (write-to-string (length (slot-value item 'files))))))
-      :item-form-view (defview nil (:type form :persistp t :inherit-from '(:scaffold collection) :buttons '((:submit . "Save")))))
+      :item-form-view (defview nil (:type form :persistp t :inherit-from '(:scaffold collection) :buttons '((:submit . "Save") (:cancel . "Close")))))
     (lambda (&rest args)
       (with-html 
+        (:br)
         (:h1 "Магазин")))
 
     (make-instance 
@@ -56,7 +58,10 @@
                      (files-count :present-as html 
                                   :reader (lambda (item)
                                             (write-to-string (length (slot-value item 'files))))))
-      :item-form-view (defview nil (:type form :persistp t :inherit-from '(:scaffold shop-item) :buttons '((:submit . "Save")))))))
+      :item-form-view (defview nil (:type form :persistp t :inherit-from '(:scaffold shop-item) :buttons '((:submit . "Save") (:cancel . "Close")))))
+
+    (lambda (&rest args)
+      (with-html (:br)))))
 
 (defun init-user-session (comp)
   (setf (composite-widgets comp)

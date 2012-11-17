@@ -10,3 +10,21 @@
 [submodule "lib/src/firephp"]
 	path = lib/src/firephp
 	url = git://github.com/html/firephp.git
+[submodule "lib/src/weblocks-strings-translation-app"]
+	path = lib/src/weblocks-strings-translation-app
+	url = git://github.com/html/weblocks-strings-translation-app.git
+[submodule "lib/src/prevalence-serialized-i18n"]
+	path = lib/src/prevalence-serialized-i18n
+	url = git://github.com/html/prevalence-serialized-i18n.git
+[submodule "lib/src/weblocks-filtering-widget"]
+	path = lib/src/weblocks-filtering-widget
+	url = git://github.com/html/weblocks-filtering-widget.git
+[submodule "lib/src/weblocks-twitter-bootstrap-application"]
+	path = lib/src/weblocks-twitter-bootstrap-application
+	url = git://github.com/html/weblocks-twitter-bootstrap-application.git
+[submodule "lib/src/cl-mustache"]
+	path = lib/src/cl-mustache
+	url = git://github.com/kanru/cl-mustache.git
+[submodule "lib/src/weblocks-utils"]
+	path = lib/src/weblocks-utils
+	url = git://github.com/html/weblocks-utils.git

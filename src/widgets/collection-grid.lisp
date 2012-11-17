@@ -11,7 +11,7 @@
 
 (defmethod dataedit-create-drilldown-widget ((grid collection-grid) item)
   (make-instance 'composite
-                 :dom-class "drilldown-composite"
+                 :dom-class "drilldown-composite well"
                  :widgets (list
                             (make-quickform 
                               (dataedit-item-form-view grid)

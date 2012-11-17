@@ -20,6 +20,8 @@
       (require :linedit)
       (funcall (intern "INSTALL-REPL" :linedit) :wrap-current t)))
 
+(require :yaclml)
+(load "globalization-macros.lisp")
 (asdf:operate 'asdf:load-op 'weblocks)
 
 (asdf:oos 'asdf:load-op 'swank)
