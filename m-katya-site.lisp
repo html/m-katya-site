@@ -1,7 +1,8 @@
 (defpackage #:m-katya-site
   (:use :cl :weblocks
         :f-underscore :anaphora :cl-config 
-        :weblocks-utils)
+        :weblocks-utils 
+        :weblocks-mustache-template)
   (:import-from :hunchentoot #:header-in
     #:set-cookie #:set-cookie* #:cookie-in
     #:user-agent #:referer)

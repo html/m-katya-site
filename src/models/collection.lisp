@@ -31,8 +31,8 @@
           name
           (get-upload-directory))
         small-image-file-name
-        :target-width 100
-        :target-height 100))
+        :target-width 213
+        :target-height 213))
     (concatenate 'string "/pub/generated/100x100/" name)))
 
 (defmethod remove-file ((obj collection) file-name)

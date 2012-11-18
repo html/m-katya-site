@@ -1,0 +1,1 @@
+../src/weblocks-mustache-template/weblocks-mustache-template.asd

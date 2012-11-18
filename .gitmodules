@@ -28,3 +28,6 @@
 [submodule "lib/src/weblocks-utils"]
 	path = lib/src/weblocks-utils
 	url = git://github.com/html/weblocks-utils.git
+[submodule "lib/src/weblocks-mustache-template"]
+	path = lib/src/weblocks-mustache-template
+	url = git://github.com/html/weblocks-mustache-template.git
