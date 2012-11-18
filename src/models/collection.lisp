@@ -25,19 +25,21 @@
   (concatenate 'string (pathname-name pathname) "." (pathname-type pathname)))
 
 (defun collection-small-image (name)
-  (let ((small-image-file-name
+  (if name
+    (let ((small-image-file-name
+            (merge-pathnames 
+              name
+              (get-small-images-directory))))
+      (unless (probe-file small-image-file-name)
+        (resize-image 
           (merge-pathnames 
             name
-            (get-small-images-directory))))
-    (unless (probe-file small-image-file-name)
-      (resize-image 
-        (merge-pathnames 
-          name
-          (get-upload-directory))
-        small-image-file-name
-        :target-width 213
-        :target-height 213))
-    (concatenate 'string "/pub/generated/" (collection-image-dimensions-string) "/" name)))
+            (get-upload-directory))
+          small-image-file-name
+          :target-width (car *collection-image-dimensions*)
+          :target-height (cdr *collection-image-dimensions*)))
+      (concatenate 'string "/pub/generated/" (collection-image-dimensions-string) "/" name))
+    (format nil "http://placehold.it/~A" (collection-image-dimensions-string))))
 
 (defmethod remove-file ((obj collection) file-name)
   (with-slots (files) obj

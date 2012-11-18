@@ -7,4 +7,9 @@
           collect 
           (loop for i from 1 to size while list collect (pop list)))))
 
+(defun url-encode (string)
+  (drakma:url-encode string :utf-8))
+
+(defun strip-tags (string)
+  (cl-ppcre:regex-replace-all "<[^>]*>" string ""))
 

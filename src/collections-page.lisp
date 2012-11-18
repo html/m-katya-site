@@ -44,6 +44,10 @@
   (loop for i in (slot-value current-page 'files)
         collect (list (cons :url (collection-small-image i)))))
 
+(defun collection-thumbnails-for-mustache (current-page)
+  (loop for i in (chunk-list (collection-thumbnails current-page) 3)
+        collect (list (cons :thumbnails i)))) 
+
 (defmethod mustache-template-mixin-variables :around ((widget collections-page))
   (with-slots (current-page) widget
     (append 
@@ -51,18 +55,10 @@
         (cons :content (with-output-to-string (str)
                          (with-mustache-output-to str 
                            (collections-layout (list 
-                                                 (cons :nav-item (when current-page 
-                                                                   (collections-nav-item (object-id current-page)))
-                                                       #+l(list 
-                                                            (list '(:title . "Item 1")
-                                                                  '(:active-p . t))
-                                                            (list '(:title . "Item 2"))
-                                                            (list '(:title . "Item 3"))))
+                                                 (cons :nav-item 
+                                                       (when current-page 
+                                                         (collections-nav-item (object-id current-page))))
                                                  (cons :thumbnails-rows 
                                                        (when current-page 
-                                                         (loop for i in 
-                                                               (chunk-list 
-                                                                 (collection-thumbnails current-page)
-                                                                 3)
-                                                               collect (list (cons :thumbnails i)))))))))))
+                                                         (collection-thumbnails-for-mustache current-page)))))))))
       (call-next-method))))

@@ -15,73 +15,25 @@
 
 (create-single-pages)
 
-(defun strip-tags (string)
-  (cl-ppcre:regex-replace-all "<[^>]*>" string ""))
-
-;; Define callback function to initialize new sessions
-(defun make-init-widgets ()
-  (list 
-    (lambda (&rest args)
-      (with-html
-        (:h1 "Страницы")))
-    (make-instance 
-      'pages-grid 
-      :data-class 'page 
-      :item-form-view (defview nil (:type form :persistp t :inherit-from '(:scaffold page))
-                               (content :present-as tinymce-textarea))
-      :view (defview nil (:type table :inherit-from '(:scaffold page))
-                     (content :present-as html 
-                              :reader (lambda (item)
-                                        (strip-tags (page-content item))))))
-    (lambda (&rest args)
-      (with-html
-        (:br)
-        (:h1 "Коллекции")))
-
-    (make-instance 
-      'collection-grid 
-      :data-class 'collection 
-      :view (defview nil (:type table :inherit-from '(:scaffold collection) )
-                     (files-count :present-as html 
-                                  :reader (lambda (item)
-                                            (write-to-string (length (slot-value item 'files))))))
-      :item-form-view (defview nil (:type form :persistp t :inherit-from '(:scaffold collection) :buttons '((:submit . "Save") (:cancel . "Close")))))
-    (lambda (&rest args)
-      (with-html 
-        (:br)
-        (:h1 "Магазин")))
-
-    (make-instance 
-      'collection-grid 
-      :data-class 'shop-item
-      :view (defview nil (:type table :inherit-from '(:scaffold shop-item) )
-                     (files-count :present-as html 
-                                  :reader (lambda (item)
-                                            (write-to-string (length (slot-value item 'files))))))
-      :item-form-view (defview nil (:type form :persistp t :inherit-from '(:scaffold shop-item) :buttons '((:submit . "Save") (:cancel . "Close")))))
-
-    (lambda (&rest args)
-      (with-html (:br)))))
-
 (mustache:defmustache main-page 
                       (yaclml:with-yaclml-output-to-string 
-                        (<:h1 
-                          (<:as-is "{{page-title}}"))
-                        (<:div :class "navbar"
-                               (<:div :class "navbar-inner"
-                                      (<:span :class "brand" "") 
-                                      (<:ul :class "nav"
-                                            (flet ((get-page-title-for-name (name)
-                                                     (page-title (first-by-values 'page :name name))))
-                                              (loop for (title link class) 
-                                                    in (list 
-                                                         (list (get-page-title-for-name "about-us") "/about-us" "about-us")
-                                                         (list (get-page-title-for-name "contacts") "/contacts" "contacts") 
-                                                         (list "Shop" "/shop" "shop") 
-                                                         (list "Collections" "/collections" "collections")
-                                                         (list (get-page-title-for-name "services") "/services" "services")) do 
-                                                    (<:li :class (format nil "{{#~A-active-p}}active{{/~A-active-p}}" class class)
-                                                      (<:a :href link (<:as-is title))))))))
+                        (<:div :class "page-header"
+                               (<:h1 
+                                 (<:as-is "{{page-title}}")))
+                        (<:style :type "text/css"
+                                 ".page-header {margin-bottom:10px;}")
+                        (<:ul :class "nav nav-pills"
+                              (flet ((get-page-title-for-name (name)
+                                       (page-title (first-by-values 'page :name name))))
+                                (loop for (title link class) 
+                                      in (list 
+                                           (list (get-page-title-for-name "about-us") "/about-us" "about-us")
+                                           (list (get-page-title-for-name "contacts") "/contacts" "contacts") 
+                                           (list "Shop" "/shop" "shop") 
+                                           (list "Collections" "/collections" "collections")
+                                           (list (get-page-title-for-name "services") "/services" "services")) do 
+                                      (<:li :class (format nil "{{#~A-active-p}}active{{/~A-active-p}}" class class)
+                                        (<:a :href link (<:as-is title))))))
                         (<:as-is "{{{content}}}")))
 
 (defwidget main-page (mustache-template-widget)
@@ -111,22 +63,24 @@
 (define-page-variables-method services-page "services")
 
 (defwidget shop-page (main-page)
-  ((weblocks-mustache-template:variables :initform '((page-title . "Shop") (shop-active-p . t)))))
+  ((weblocks-mustache-template:variables :initform '((page-title . "Shop") (shop-active-p . t)))
+   (current-category :initarg :current-category :initform nil)
+   (current-page :initarg :current-page :initform nil)))
 
 (mustache:defmustache 
-  shop-layout 
+  shop-list-layout 
   (yaclml:with-yaclml-output-to-string
     (<:div :class "row-fluid"
            (<:div :class "well span3" :style "padding:8px 0;"
                   (<:ul :class "nav nav-list"
                         (<:as-is "{{#nav-item}}")
                         (<:li :class "{{#active-p}}active{{/active-p}}"
-                              (<:a :href "/collections/{{id}}" 
+                              (<:a :href "{{{shop-item-url}}}" 
                                    (<:i :class "icon-chevron-right pull-right")
                                    (<:as-is "{{title}}")))
                         (<:as-is "{{/nav-item}}")
                         (<:as-is "{{^nav-item}}")
-                        (<:li (<:span "No collections"))
+                        (<:li (<:span "No items"))
                         (<:as-is "{{/nav-item}}")))
            (<:div :class "span9"
                   (<:div :class "row-fluid"
@@ -134,14 +88,113 @@
                          (<:ul :class "thumbnails"
                                (<:as-is "{{#thumbnails}}")
                                (<:li :class "span4" 
-                                     (<:a :class "thumbnail"
-                                          (<:img :src "{{url}}")))
+                                     (<:a :href "{{url}}" :class "thumbnail"
+                                          (<:img :src "{{image-url}}")
+                                          (<:div :class "caption"
+                                                 (<:h3 (<:as-is "{{shop-item-title}}")))))
                                (<:as-is "{{/thumbnails}}"))
                          (<:as-is "{{/thumbnails-rows}}")
                          (<:as-is "{{^thumbnails-rows}}")
-                         (<:div :class "span12 well" "No Images")
+                         (<:div :class "span12 well" "No items")
                          (<:as-is "{{/thumbnails-rows}}"))))))
 
+(mustache:defmustache 
+  shop-item-layout 
+  (yaclml:with-yaclml-output-to-string
+    (<:div :class "row-fluid"
+           (<:div :class "well span3" :style "padding:8px 0;"
+                  (<:ul :class "nav nav-list"
+                        (<:as-is "{{#nav-item}}")
+                        (<:li :class "{{#active-p}}active{{/active-p}}"
+                              (<:a :href "{{shop-item-url}}" 
+                                   (<:i :class "icon-chevron-right pull-right")
+                                   (<:as-is "{{title}}")))
+                        (<:as-is "{{/nav-item}}")
+                        (<:as-is "{{^nav-item}}")
+                        (<:li (<:span "No items"))
+                        (<:as-is "{{/nav-item}}")))
+           (<:div :class "span9"
+                  (<:div :class "row-fluid"
+                         (<:div :class "span8"
+                                (<:div :class "row-fluid"
+                                       (<:div :class "thumbnail span12"
+                                              (<:img :src "http://placehold.it/500x500")) 
+                                       (<:div :class "span12" "")
+                                       (<:as-is "{{#thumbnails-rows}}") 
+                                       (<:ul :class "thumbnails"
+                                             (<:as-is "{{#thumbnails}}")
+                                             (<:li :class "span3" 
+                                                   (<:a :href "{{url}}" :class "thumbnail"
+                                                        (<:img :src "{{image-url}}")))
+                                             (<:as-is "{{/thumbnails}}")) 
+                                       (<:as-is "{{/thumbnails-rows}}")) 
+                                (<:as-is "{{^thumbnails-rows}}") 
+                                (<:div :class "span12" "No images") 
+                                (<:as-is "{{/thumbnails-rows}}"))
+                         (<:div :class "span4"
+                                (<:as-is "{{#description}}")
+                                (<:as-is "{{description}}")
+                                (<:br)
+                                (<:as-is "{{/description}}")
+                                (<:br)
+                                (<:b "Price: ")
+                                (<:as-is "{{price}}")
+                                (<:br)
+                                (<:br)
+                                (<:a :class "btn btn-large btn-primary" "Buy")))))))
+
+(defun shop-item-nav-item (current-category)
+  (loop for i in (list-shop-items-categories) 
+        collect 
+        (list 
+          (cons :title i)
+          (cons :active-p (string= i current-category))
+          (cons :shop-item-url (format nil "/shop/~A" (url-encode i))))))
+
+(defun shop-item-category-thumbnails (category)
+  (loop for i in (shop-items-by-category category)
+        collect (list 
+                  (cons :shop-item-title (shop-item-title i))
+                  (cons :url (format nil "/shop/~A/~A" (url-encode (shop-item-category-title i)) (object-id i)))
+                  (cons :image-url (shop-item-list-thumbnail i)))))
+
+(defun shop-item-category-thumbnails-for-mustache (category)
+  (loop for i in (chunk-list (shop-item-category-thumbnails category) 3)
+        collect (list (cons :thumbnails i)))) 
+
+(defun shop-item-thumbnails (shop-item)
+  (loop for i in (slot-value shop-item 'files)
+        collect (list 
+                  ;(cons :url (format nil "/shop/~A/~A" (shop-item-category-title i) (object-id i)))
+                  (cons :image-url (collection-small-image i)))))
+
+(defun shop-item-thumbnails-for-mustache (shop-item)
+  (loop for i in (chunk-list (shop-item-thumbnails shop-item) 4)
+        collect (list (cons :thumbnails i)))) 
+
+(defmethod mustache-template-mixin-variables :around ((widget shop-page))
+  (with-slots (current-category current-page) widget
+    (append 
+      (call-next-method)
+      (list 
+        (cons :page-title 
+              (if current-page 
+                (shop-item-title current-page)
+                current-category))
+        (cons :content 
+              (with-output-to-string (str)
+                (with-mustache-output-to str 
+                  (if current-page
+                    (shop-item-layout 
+                      (list 
+                        (cons :nav-item (shop-item-nav-item current-category))
+                        (cons :thumbnails-rows (shop-item-thumbnails-for-mustache current-page))
+                        (cons :price (shop-item-price current-page))
+                        (cons :description (shop-item-description current-page))))
+                    (shop-list-layout 
+                      (list 
+                        (cons :nav-item (shop-item-nav-item current-category))
+                        (cons :thumbnails-rows (shop-item-category-thumbnails-for-mustache current-category))))))))))))
 
 (defun init-user-session (comp)
   (setf (composite-widgets comp)
@@ -151,7 +204,25 @@
                    (cons nil (make-instance 'main-page))
                    (cons "about-us" (make-instance 'about-us-page))
                    (cons "contacts" (make-instance 'contacts-page))
-                   (cons "shop" (make-instance 'shop-page))
+                   (cons "shop" (make-instance 
+                                  'callback-selector-widget 
+                                  :lookup-function (lambda (widget tokens)
+                                                     (let ((category-param-exists-in-request-p (not tokens))
+                                                           (some-collection-exists-p (first-of 'shop-item)))
+                                                       (when (and category-param-exists-in-request-p some-collection-exists-p) 
+                                                         (redirect 
+                                                           (format nil "/shop/~A" (url-encode (first (list-shop-items-categories))))
+                                                           :defer nil)))
+                                                     (assert (<= (length tokens) 2))
+                                                     (let ((item (and (first tokens) 
+                                                                      (first-by-values 'shop-item :category-title (first tokens))))
+                                                           (current-item (and (second tokens)
+                                                                              (first-by-values 'shop-item :id (parse-integer (second tokens))))))
+                                                       (values 
+                                                         (make-instance 'shop-page 
+                                                                        :current-category (shop-item-category-title item)
+                                                                        :current-page current-item)
+                                                         tokens nil :no-cache)))))
                    ;(cons "collections" (make-instance 'collections-page))
                    (cons "services" (make-instance 'services-page))
                    (cons "admin" (make-init-widgets))
@@ -159,10 +230,12 @@
                          (make-instance 
                            'callback-selector-widget 
                            :lookup-function (lambda (widget tokens)
-                                              (when (and (not tokens) (first-of 'collection)) 
-                                                (redirect 
-                                                  (format nil "/collections/~A" (object-id (first-of 'collection)))
-                                                  :defer nil))
+                                              (let ((id-param-exists-in-request-p (not tokens))
+                                                    (some-collection-exists-p (first-of 'collection)))
+                                                (when (and id-param-exists-in-request-p some-collection-exists-p) 
+                                                  (redirect 
+                                                    (format nil "/collections/~A" (object-id (first-of 'collection)))
+                                                    :defer nil)))
                                               (assert (<= (length tokens) 1))
                                               (let ((item (and (first tokens) (first-by-values 'collection :id (parse-integer (first tokens))))))
                                                 (values (make-instance 'collections-page :current-page item) tokens nil)))))))))
