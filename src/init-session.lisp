@@ -36,7 +36,7 @@
     (lambda (&rest args)
       (with-html
         (:br)
-        (:h1 "Колекции")))
+        (:h1 "Коллекции")))
 
     (make-instance 
       'collection-grid 
