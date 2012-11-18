@@ -71,15 +71,17 @@
                                (<:div :class "navbar-inner"
                                       (<:span :class "brand" "") 
                                       (<:ul :class "nav"
-                                            (loop for (title link class) 
-                                                  in (list 
-                                                       (list "About us" "/about-us" "about-us")
-                                                       (list "Contacts" "/contacts" "contacts") 
-                                                       (list "Shop" "/shop" "shop") 
-                                                       (list "Collections" "/collections" "collections")
-                                                       (list "Services" "/services" "services")) do 
-                                                  (<:li :class (format nil "{{#~A-active-p}}active{{/~A-active-p}}" class class)
-                                                        (<:a :href link (<:as-is title)))))))
+                                            (flet ((get-page-title-for-name (name)
+                                                     (page-title (first-by-values 'page :name name))))
+                                              (loop for (title link class) 
+                                                    in (list 
+                                                         (list (get-page-title-for-name "about-us") "/about-us" "about-us")
+                                                         (list (get-page-title-for-name "contacts") "/contacts" "contacts") 
+                                                         (list "Shop" "/shop" "shop") 
+                                                         (list "Collections" "/collections" "collections")
+                                                         (list (get-page-title-for-name "services") "/services" "services")) do 
+                                                    (<:li :class (format nil "{{#~A-active-p}}active{{/~A-active-p}}" class class)
+                                                      (<:a :href link (<:as-is title))))))))
                         (<:as-is "{{{content}}}")))
 
 (defwidget main-page (mustache-template-widget)
@@ -111,30 +113,8 @@
 (defwidget shop-page (main-page)
   ((weblocks-mustache-template:variables :initform '((page-title . "Shop") (shop-active-p . t)))))
 
-(defwidget callback-selector-widget (on-demand-selector)
-  ())
-
-(defmethod update-children ((selector callback-selector-widget))
-  (declare (special *uri-tokens*))
-  (setf (selector-base-uri selector)
-	(make-webapp-uri
-	 (string-left-trim
-	  "/" (string-right-trim
-	       "/" (uri-tokens-to-string (consumed-tokens *uri-tokens*))))))
-  (let ((widget (get-widget-for-tokens selector *uri-tokens*)))
-    ;(error (format nil "~A~%" (remaining-tokens  *uri-tokens*)))
-    (if widget
-      (setf (widget-children selector :selector) widget)
-      (if (remaining-tokens *uri-tokens*)
-        (assert (signal 'http-not-found))
-        #'init-user-session))))
-
-(defwidget collections-page (main-page)
-  ((weblocks-mustache-template:variables :initform '((page-title . "Collections") (collections-active-p . t)))
-   (current-page :initarg :current-page :initform nil)))
-
 (mustache:defmustache 
-  collections-layout 
+  shop-layout 
   (yaclml:with-yaclml-output-to-string
     (<:div :class "row-fluid"
            (<:div :class "well span3" :style "padding:8px 0;"
@@ -147,7 +127,7 @@
                         (<:as-is "{{/nav-item}}")
                         (<:as-is "{{^nav-item}}")
                         (<:li (<:span "No collections"))
-                        (<:as-is "{{/nav-item}}"))) 
+                        (<:as-is "{{/nav-item}}")))
            (<:div :class "span9"
                   (<:div :class "row-fluid"
                          (<:as-is "{{#thumbnails-rows}}")
@@ -162,46 +142,6 @@
                          (<:div :class "span12 well" "No Images")
                          (<:as-is "{{/thumbnails-rows}}"))))))
 
-(defun collections-nav-item (active-id)
-  (loop for i in (all-of 'collection) 
-        collect (list 
-                  (cons :title (collection-title i))
-                  (cons :active-p (equal (object-id i) active-id))
-                  (cons :id (object-id i)))))
-
-(defun collection-thumbnails (current-page)
-  (loop for i in (slot-value current-page 'files)
-        collect (list (cons :url (collection-small-image i)))))
-
-(defun chunk-list (list size)
-  (assert (> size 0))
-  (let ((list (copy-list list)))
-    (loop while list 
-          collect 
-          (loop for i from 1 to size while list collect (pop list)))))
-
-(defmethod mustache-template-mixin-variables :around ((widget collections-page))
-  (with-slots (current-page) widget
-    (append 
-      (list 
-        (cons :content (with-output-to-string (str)
-                         (with-mustache-output-to str 
-                           (collections-layout (list 
-                                                 (cons :nav-item (when current-page 
-                                                                   (collections-nav-item (object-id current-page)))
-                                                       #+l(list 
-                                                            (list '(:title . "Item 1")
-                                                                  '(:active-p . t))
-                                                            (list '(:title . "Item 2"))
-                                                            (list '(:title . "Item 3"))))
-                                                 (cons :thumbnails-rows 
-                                                       (when current-page 
-                                                         (loop for i in 
-                                                               (chunk-list 
-                                                                 (collection-thumbnails current-page)
-                                                                 3)
-                                                               collect (list (cons :thumbnails i)))))))))))
-      (call-next-method))))
 
 (defun init-user-session (comp)
   (setf (composite-widgets comp)

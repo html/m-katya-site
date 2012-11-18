@@ -16,17 +16,21 @@
       :components ((:file "stores"))
       :depends-on ("m-katya-site"))
      (:module src 
-      :components ((:file "init-session" :depends-on ("models" "widgets" "tinymce-textarea-presentation" "image-resize-util"))
-        (:module "models" 
-         :components 
-         ((:file "page")
-          (:file "collection")
-          (:file "shop-item"))
-         :depends-on ("image-resize-util"))
-        (:module "widgets" 
-         :components 
-         ((:file "pages-grid")
-          (:file "collection-grid")))
-        (:file "tinymce-textarea-presentation")
-        (:file "image-resize-util"))
+      :components 
+      ((:file "init-session" :depends-on ("models" "widgets" "tinymce-textarea-presentation" "image-resize-util" "callback-selector-widget" "collections-page"))
+       (:module "models" 
+        :components 
+        ((:file "page")
+         (:file "collection")
+         (:file "shop-item"))
+        :depends-on ("image-resize-util"))
+       (:module "widgets" 
+        :components 
+        ((:file "pages-grid")
+         (:file "collection-grid")))
+       (:file "tinymce-textarea-presentation")
+       (:file "image-resize-util")
+       (:file "util")
+       (:file "callback-selector-widget")
+       (:file "collections-page" :depends-on ("util")))
       :depends-on ("m-katya-site" conf))))
