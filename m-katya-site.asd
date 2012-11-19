@@ -5,7 +5,7 @@
 
 (defsystem m-katya-site
    :name "m-katya-site"
-   :version "0.0.6"
+   :version "0.0.7"
    :maintainer ""
    :author ""
    :licence ""
@@ -17,12 +17,13 @@
       :depends-on ("m-katya-site"))
      (:module src 
       :components 
-      ((:file "init-session" :depends-on ("models" "widgets" "tinymce-textarea-presentation" "image-resize-util" "callback-selector-widget" "collections-page" "admin-widgets"))
+      ((:file "init-session" :depends-on ("models" "widgets" "tinymce-textarea-presentation" "image-resize-util" "callback-selector-widget" "collections-page" "admin-widgets" "shopping-cart" "shop-page" "pages" "shopping-cart-page"))
        (:module "models" 
         :components 
         ((:file "page")
          (:file "collection")
-         (:file "shop-item"))
+         (:file "shop-item")
+         (:file "order"))
         :depends-on ("image-resize-util"))
        (:module "widgets" 
         :components 
@@ -33,5 +34,9 @@
        (:file "util")
        (:file "callback-selector-widget")
        (:file "collections-page" :depends-on ("util"))
-       (:file "admin-widgets"))
+       (:file "admin-widgets")
+       (:file "shopping-cart")
+       (:file "shop-page" :depends-on ("pages" "util"))
+       (:file "pages" :depends-on ("models" "widgets" "util" "shopping-cart"))
+       (:file "shopping-cart-page" :depends-on ("pages")))
       :depends-on ("m-katya-site" conf))))

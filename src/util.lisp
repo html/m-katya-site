@@ -13,3 +13,9 @@
 (defun strip-tags (string)
   (cl-ppcre:regex-replace-all "<[^>]*>" string ""))
 
+(yaclml::def-simple-xtag <:a)
+
+(defmacro capture-weblocks-output (&body body)
+  `(let ((*weblocks-output-stream* (make-string-output-stream)))
+     ,@body 
+     (get-output-stream-string *weblocks-output-stream*)))

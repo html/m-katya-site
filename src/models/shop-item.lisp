@@ -25,3 +25,6 @@
 (defmethod shop-item-list-thumbnail ((item shop-item))
   (with-slots (files) item 
     (collection-small-image (first files))))
+
+(defun shop-item-url (i)
+  (format nil "/shop/~A/~A" (url-encode (shop-item-category-title i)) (object-id i)))
