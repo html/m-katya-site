@@ -1,5 +1,8 @@
 (in-package :m-katya-site)
 
+(defvar *shop-item-thumbnail-image-dimensions* (cons 99 99))
+(defvar *shop-item-big-image-dimensions* (cons 450 400))
+
 (defclass shop-item ()
   ((id)
    (title :accessor shop-item-title :initarg :title)

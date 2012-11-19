@@ -21,7 +21,17 @@
                                (<:h1 
                                  (<:as-is "{{page-title}}")))
                         (<:style :type "text/css"
-                                 ".page-header {margin-bottom:10px;}")
+                                 ".page-header {margin-bottom:10px;}
+                                  a.thumbnail.selected {
+                                      border-color: #0088cc;
+                                      -webkit-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+                                      -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+                                      box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+                                  }
+                                  .carousel-control {
+                                    top: 50%;
+                                  }
+                                  ")
                         (<:ul :class "nav nav-pills"
                               (flet ((get-page-title-for-name (name)
                                        (page-title (first-by-values 'page :name name))))
@@ -98,6 +108,8 @@
                          (<:div :class "span12 well" "No items")
                          (<:as-is "{{/thumbnails-rows}}"))))))
 
+(yaclml::def-simple-xtag <:a)
+
 (mustache:defmustache 
   shop-item-layout 
   (yaclml:with-yaclml-output-to-string
@@ -115,22 +127,52 @@
                         (<:as-is "{{/nav-item}}")))
            (<:div :class "span9"
                   (<:div :class "row-fluid"
+                         (<:as-is "{{#thumbnails-rows-exist-p}}")
                          (<:div :class "span8"
                                 (<:div :class "row-fluid"
-                                       (<:div :class "thumbnail span12"
-                                              (<:img :src "http://placehold.it/500x500")) 
-                                       (<:div :class "span12" "")
+                                       (<:div :id "myCarousel" :class "carousel slide span12 thumbnail" :style "height:400px;"
+                                              (<:div :class "carousel-inner"
+                                                     (<:as-is "{{#big-images}}")
+                                                     (<:div :class "{{#active-p}}active {{/active-p}}item" :style "text-align:center;line-height:400px;height:400px;"
+                                                            (<:img :style "display:inline;display:inline-table;display:inline-block;vertical-align:middle;" :src "{{image-url}}"))
+                                                     (<:as-is "{{/big-images}}"))
+                                              (<:a :class "carousel-control left" :href "#myCarousel" :data-slide "prev" (<:as-is"&lsaquo;"))
+                                              (<:a :class "carousel-control right" :href "#myCarousel" :data-slide "next" (<:as-is"&rsaquo;"))) 
                                        (<:as-is "{{#thumbnails-rows}}") 
-                                       (<:ul :class "thumbnails"
+                                       (<:ul :class "thumbnails carousel-thumbnails"
                                              (<:as-is "{{#thumbnails}}")
                                              (<:li :class "span3" 
-                                                   (<:a :href "{{url}}" :class "thumbnail"
+                                                   (<:a :href "javascript:;" :class "thumbnail"
                                                         (<:img :src "{{image-url}}")))
                                              (<:as-is "{{/thumbnails}}")) 
                                        (<:as-is "{{/thumbnails-rows}}")) 
                                 (<:as-is "{{^thumbnails-rows}}") 
-                                (<:div :class "span12" "No images") 
+                                (<:div :class "span12" "No images to display") 
                                 (<:as-is "{{/thumbnails-rows}}"))
+                         (<:as-is "{{/thumbnails-rows-exist-p}}")
+                         (<:script :type "text/javascript"
+                                   (<:as-is 
+                                     (ps:ps 
+                                       (ps:chain (j-query ".carousel-thumbnails li a") 
+                                                 (click (lambda ()
+                                                          (ps:chain 
+                                                            (j-query ".carousel")
+                                                            (carousel 
+                                                              (ps:chain 
+                                                                (j-query ".carousel-thumbnails li") 
+                                                                (index (ps:chain (j-query this) (parents "li")))))))))
+                                       (ps:chain (j-query ".carousel") 
+                                                 (carousel (ps:create :interval nil))
+                                                 (carousel 0)
+                                                 (bind "slid" (lambda ()
+                                                                (let ((index (ps:chain (j-query ".carousel .item") (index (j-query ".carousel .item.active")))))
+                                                                  (ps:chain (j-query ".carousel-thumbnails .selected") (remove-class "selected")) 
+                                                                  (ps:chain 
+                                                                    (j-query 
+                                                                      (ps:chain (j-query ".carousel-thumbnails li a") (get index))) 
+                                                                    (add-class "selected"))))))
+                                       (ps:chain (j-query ".carousel-thumbnails li:first a") (add-class "selected")))))
+
                          (<:div :class "span4"
                                 (<:as-is "{{#description}}")
                                 (<:as-is "{{description}}")
@@ -189,8 +231,13 @@
                       (list 
                         (cons :nav-item (shop-item-nav-item current-category))
                         (cons :thumbnails-rows (shop-item-thumbnails-for-mustache current-page))
+                        (cons :thumbnails-rows-exist-p (not (not (shop-item-thumbnails-for-mustache current-page))))
                         (cons :price (shop-item-price current-page))
-                        (cons :description (shop-item-description current-page))))
+                        (cons :description (shop-item-description current-page))
+                        (let ((images (shop-item-thumbnails current-page)))
+                          (when images
+                            (push (cons :active-p t) (first images)))
+                          (cons :big-images images))))
                     (shop-list-layout 
                       (list 
                         (cons :nav-item (shop-item-nav-item current-category))
