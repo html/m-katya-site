@@ -11,7 +11,7 @@
       :item-form-view (defview nil (:type form :persistp t :inherit-from '(:scaffold page))
                                (content :present-as tinymce-textarea))
       :view (defview nil (:type table :inherit-from '(:scaffold page))
-                     (content :present-as html 
+                     (content :present-as (excerpt :cutoff-threshold 300) 
                               :reader (lambda (item)
                                         (strip-tags (page-content item))))))
     (lambda (&rest args)
