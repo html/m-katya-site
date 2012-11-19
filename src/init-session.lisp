@@ -27,7 +27,7 @@
                                        (page-title (first-by-values 'page :name name))))
                                 (loop for (title link class) 
                                       in (list 
-                                           (list (get-page-title-for-name "about-us") "/about-us" "about-us")
+                                           (list (get-page-title-for-name "about-us") "/" "about-us")
                                            (list (get-page-title-for-name "contacts") "/contacts" "contacts") 
                                            (list "Shop" "/shop" "shop") 
                                            (list "Collections" "/collections" "collections")
@@ -201,7 +201,7 @@
         (make-instance 
           'static-selector 
           :panes (list 
-                   (cons nil (make-instance 'main-page))
+                   (cons nil (make-instance 'about-us-page))
                    (cons "about-us" (make-instance 'about-us-page))
                    (cons "contacts" (make-instance 'contacts-page))
                    (cons "shop" (make-instance 
