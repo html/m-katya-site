@@ -3,9 +3,10 @@
 (defclass order ()
   ((id)
    (items :initarg :items :accessor order-items)
-   (notes :initform nil)
-   (completed :initform nil)
-   (order-id :initform nil :initarg :order-id)))
+   (notes :initform nil :accessor order-notes)
+   (completed :initform nil :accessor order-completed)
+   (order-id :initform nil :initarg :order-id)
+   (item-created-at :initform (get-universal-time))))
 
 (defun generate-unique-order-id ()
   (loop do 

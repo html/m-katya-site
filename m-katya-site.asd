@@ -5,7 +5,7 @@
 
 (defsystem m-katya-site
    :name "m-katya-site"
-   :version "0.0.7"
+   :version "0.0.8"
    :maintainer ""
    :author ""
    :licence ""
