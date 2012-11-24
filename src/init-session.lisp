@@ -24,7 +24,7 @@
                                                                               (first-by-values 'shop-item :id (parse-integer (second tokens))))))
                                                        (values 
                                                          (make-instance 'shop-page 
-                                                                        :current-category (shop-item-category-title item)
+                                                                        :current-category (and item (shop-item-category-title item))
                                                                         :current-page current-item)
                                                          tokens nil :no-cache)))))
                    ;(cons "collections" (make-instance 'collections-page))

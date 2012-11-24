@@ -151,10 +151,11 @@
     (append 
       (call-next-method)
       (list 
-        (cons :page-title 
-              (if current-page 
-                (shop-item-title current-page)
-                current-category))
+        (when current-category 
+          (cons :page-title 
+                (if current-page 
+                  (shop-item-title current-page)
+                  current-category)))
         (cons :content 
               (with-output-to-string (str)
                 (with-mustache-output-to str 
