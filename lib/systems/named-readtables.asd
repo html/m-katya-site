@@ -1,1 +1,0 @@
-../src/named-readtables-0.9/named-readtables.asd
