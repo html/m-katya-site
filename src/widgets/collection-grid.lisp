@@ -37,9 +37,9 @@
                                                         (let ((id (parse-integer (getf args :id)))
                                                               (file (getf args :file)))
                                                           (remove-file 
-                                                            (weblocks-utils:first-by-values 'collection :id id)
+                                                            (weblocks-utils:first-by-values (dataseq-data-class grid) :id id)
                                                             file))
-                                                        (redirect "" :defer nil))))))
+                                                        (redirect "/admin" :defer nil))))))
                                   (loop for i in (slot-value item 'files) do 
                                       (<:div :style "float:left;padding:15px;text-align:right;position:relative;"
                                              (<:div :style "position:absolute;right:0px;top:15px;font-size:20px;" :class "remove-image-link"
