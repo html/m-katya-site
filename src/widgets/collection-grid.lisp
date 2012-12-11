@@ -41,28 +41,28 @@
                                                             file))
                                                         (redirect "/admin" :defer nil))))))
                                   (loop for i in (slot-value item 'files) do 
-                                      (<:div :style "float:left;padding:15px;text-align:right;position:relative;"
-                                             (<:div :style "position:absolute;right:0px;top:15px;font-size:20px;" :class "remove-image-link"
-                                                    (<:a :href 
-                                                         (add-get-param-to-url 
-                                                           (add-get-param-to-url action-url 
-                                                                                 "id"
-                                                                                 (write-to-string (object-id item)))
-                                                           "file"
-                                                           i)  "[x]"))
-                                             (<:br)
-                                             (<:img :src (collection-small-image i)))))
+                                        (<:div :style "float:left;padding:15px;text-align:right;position:relative;"
+                                               (<:div :style "position:absolute;right:0px;top:15px;font-size:20px;" :class "remove-image-link"
+                                                      (<:a :href 
+                                                           (add-get-param-to-url 
+                                                             (add-get-param-to-url action-url 
+                                                                                   "id"
+                                                                                   (write-to-string (object-id item)))
+                                                             "file"
+                                                             i)  "[x]"))
+                                               (<:br)
+                                               (<:img :src (collection-small-image i)))))
                                 (<:div :style "clear:both")))
                             (make-quickform 
                               (defview nil 
                                        (:type form 
-                                        :caption ""
-                                        :buttons '((:submit . "Upload file") (:cancel . "Close"))
-                                        :persistp nil 
-                                        :enctype "multipart/form-data" 
-                                        :use-ajax-p nil)
-                                       (upload-image :present-as (file-upload)
-                                                     :parse-as (file-upload 
+                                              :caption ""
+                                              :buttons '((:submit . "Upload file") (:cancel . "Close"))
+                                              :persistp nil 
+                                              :enctype "multipart/form-data" 
+                                              :use-ajax-p t)
+                                       (upload-image :present-as (ajax-file-upload)
+                                                     :parse-as (ajax-file-upload 
                                                                  :upload-directory (get-upload-directory)
                                                                  :file-name :unique)
                                                      :reader (lambda (item) 
@@ -75,6 +75,7 @@
                                             (flash-message (dataseq-flash grid)
                                                            "Successfully added image")
                                             (mark-dirty form)
+                                            (mark-dirty (root-widget))
                                             (setf (dataform-ui-state form) :form))
                               :on-cancel (when (eql (gridedit-drilldown-type grid) :edit)
                                            (lambda (obj)

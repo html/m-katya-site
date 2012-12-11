@@ -10,7 +10,7 @@
    :author ""
    :licence ""
    :description "m-katya-site"
-   :depends-on (:weblocks :weblocks-utils :cl-config :yaclml :cl-gd :prevalence-serialized-i18n :weblocks-strings-translation-app :weblocks-twitter-bootstrap-application :weblocks-mustache-template :drakma :split-sequence)
+   :depends-on (:weblocks :weblocks-utils :cl-config :yaclml :cl-gd :prevalence-serialized-i18n :weblocks-strings-translation-app :weblocks-twitter-bootstrap-application :weblocks-mustache-template :drakma :split-sequence :weblocks-ajax-file-upload-presentation)
    :components ((:file "m-katya-site")
      (:module conf
       :components ((:file "stores"))

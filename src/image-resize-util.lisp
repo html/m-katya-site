@@ -23,24 +23,26 @@
 (assert (equal (calculate-inner-resize 100 200 100 100) (values 0 0 25  0  50 100)))
 
 (defun resize-image (from-file-name to-file-name &key target-width target-height)
-  (cl-gd:with-image-from-file (source-image from-file-name)
-    (multiple-value-bind (source-width source-height) (cl-gd:image-size source-image)
-      (cl-gd:with-image (new target-width target-height)
-        (multiple-value-bind 
-          (source-x source-y target-x target-y target-width-actual target-height-actual)
-          (calculate-inner-resize 
-            source-width source-height 
-            target-width target-height)
+  (handler-case 
+    (cl-gd:with-image-from-file (source-image from-file-name)
+      (multiple-value-bind (source-width source-height) (cl-gd:image-size source-image)
+        (cl-gd:with-image (new target-width target-height)
+          (multiple-value-bind 
+            (source-x source-y target-x target-y target-width-actual target-height-actual)
+            (calculate-inner-resize 
+              source-width source-height 
+              target-width target-height)
 
-          (cl-gd:copy-image 
-            source-image new 
-            source-x source-y 
-            target-x target-y 
-            source-width source-height 
-            :resize t 
-            :dest-width target-width-actual
-            :dest-height target-height-actual)) 
-        (cl-gd:write-image-to-file to-file-name 
-                                   :image new 
-                                   :if-exists :supersede)))))
+            (cl-gd:copy-image 
+              source-image new 
+              source-x source-y 
+              target-x target-y 
+              source-width source-height 
+              :resize t 
+              :dest-width target-width-actual
+              :dest-height target-height-actual)) 
+          (cl-gd:write-image-to-file to-file-name 
+                                     :image new 
+                                     :if-exists :supersede))))
+    (simple-error nil)))
 

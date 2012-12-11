@@ -31,3 +31,9 @@
 [submodule ".quicklisp/local-projects/cl-mustache"]
 	path = .quicklisp/local-projects/cl-mustache
 	url = git://github.com/kanru/cl-mustache.git
+[submodule ".quicklisp/local-projects/weblocks"]
+	path = .quicklisp/local-projects/weblocks
+	url = git://github.com/html/weblocks.git
+[submodule ".quicklisp/local-projects/weblocks-ajax-file-upload-presentation"]
+	path = .quicklisp/local-projects/weblocks-ajax-file-upload-presentation
+	url = git://github.com/html/weblocks-ajax-file-upload-presentation.git
